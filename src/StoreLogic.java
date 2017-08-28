@@ -4,9 +4,11 @@ Assignment title: Program 1 - Event-driven Programming
 Date: Sunday Septembet 10, 2017 
 */
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,9 @@ public class StoreLogic {
      private int viewCounter = 0;
      private Order tempOrder = new Order();
      private Invoice invoice = new Invoice();
+     private String taxdisp = "6%";
+     private float taxRate = 0.06f;
+     private String outputFile = "transactions.txt";
     
     public StoreLogic(Gui gui) throws IOException{
         //Grab the gui
@@ -48,7 +53,7 @@ public class StoreLogic {
         
     }
 
-    //OPen the file and set it up to read it
+    //Open the file and set it up to read it
     public void openFile(){
     try{
         line = new Scanner(new File("inventory.txt"));
@@ -57,6 +62,8 @@ public class StoreLogic {
     catch(Exception e){
         System.out.println("Could not find file");
     }
+    
+    
 }
     //Read the file into a List to refer when searching for BookID
     public ArrayList<Book> readFile(){
@@ -74,6 +81,7 @@ public class StoreLogic {
             //System.out.println(id + " " + record + " " + price);
             //break;
         }
+        line.close();
         return bookList;
     }
     
@@ -86,27 +94,6 @@ public class StoreLogic {
         return new Book();
     }
     
-   /* public float prepareDiscounts(int userQuantity, Book book, Order order){
-        float discount = 0;
-        //set discount when less than 4
-        if(userQuantity<=4){
-            order.setuserDiscount(discount);
-            order.setuserSubTotal(book.bPrice * userQuantity);
-            //float totalBooksPrice = book.bPrice * userQuantity;
-            //System.out.println(totalBooksPrice);
-            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", order.getuserQuantity()));
-            return discount;
-        }else if(userQuantity >5 && userQuantity < 9){
-            discount = (float) 0.1;
-            order.setuserDiscount(discount);
-            order.setuserSubTotal(book.bPrice * userQuantity);
-            //float totalBooksPrice = book.bPrice * userQuantity;
-            //System.out.println(totalBooksPrice);
-            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", order.getuserQuantity()));
-            return discount;
-        }
-        return discount;
-    }*/
     //Pull up book info and set discounts for information field.
     public void pullUpBookInfo(Book book, int userQuantity, Order order){
         float discount = order.getuserDiscount();
@@ -205,8 +192,9 @@ public class StoreLogic {
     
     public void confirmOrder(){
         invoice.getorderList().add(tempOrder);
-        float invoiceSubTotal = invoice.getorderSubTotal() + tempOrder.getuserSubtotal();
-        invoice.setorderSubTotal(invoiceSubTotal);       
+        invoice.setorderSubTotal(invoice.getorderSubTotal() + tempOrder.getuserSubtotal());  
+        float invoiceSubTotal =   invoice.getorderSubTotal();  
+        System.out.println(tempOrder.getuserSubtotal()+"YOOOOOOOOO");
         
         int orderUnits = tempOrder.getuserQuantity();
         invoice.setorderUnits(orderUnits + invoice.getorderUnits());
@@ -225,6 +213,8 @@ public class StoreLogic {
             gui.setitemInfoLabel(totalOrder_counter+1);
             gui.setitemQuantityLabel(totalOrder_counter+1);
             
+        }else{
+            gui.getfinishOrderBut().setEnabled(true);
         }
         totalOrder_counter++;
         //System.out.println(totalOrder+" "+totalOrder_counter);
@@ -286,6 +276,74 @@ public class StoreLogic {
         invoice.setorderUnits(0);
         gui.getNumItemsIn().setEnabled(true);
         gui.getviewOrderBut().setEnabled(false);
+    }
+    
+    public void finishOrder() throws IOException{
+        invoice.setDate();
+        String dialog = "Date: ";
+        int i = 1;
+        dialog = dialog + invoice.getorderTimeStamp()+"\n\n";
+        dialog = dialog + "Number of line items: " + invoice.getorderUnits() + "\n\n";
+        dialog = dialog + "Item# / ID / Title / Price / Quantity / Discount % / Subtotal: \n\n";
+        
+        ArrayList<Order> orderList = invoice.getorderList();
+        Iterator<Order> it = orderList.iterator();
+        while(it.hasNext()){
+            Order order = it.next();
+            float discount = order.getuserDiscount() * 100;
+            Book book = order.getuserBook();
+            dialog = dialog + Integer.toString(i)+". "+book.getbID()+" "+book.bName+" "+book.bPrice+" "+order.getuserQuantity()+" %"+String.format("%.0f",discount)+" $"+String.format("%.2f", order.getuserSubtotal())+"\n";
+            i++;
+        }
+        
+        dialog = dialog + "Order SubTotal: " + String.format("%.02f", invoice.getorderSubTotal()) + "\n\n";
+        dialog = dialog + "Tax Rate: " + taxdisp + "\n\n";
+        invoice.setTaxAmount(invoice.getorderSubTotal()*taxRate);
+        dialog = dialog + "Tax Amount: $"+ String.format("%.02f", invoice.getTaxAmount()) + "\n\n";
+        invoice.setorderTotal(invoice.getTaxAmount()+invoice.getorderSubTotal());
+        dialog = dialog + "Order Total: $" + String.format("%.02f", invoice.getorderTotal()) + "\n\n";
+        dialog = dialog + "Thank you for shopping.";
+        
+        JOptionPane.showMessageDialog(null, dialog);
+        gui.getviewOrderBut().setEnabled(false);
+        gui.getfinishOrderBut().setEnabled(false);
+        writeOutput();
+        
+    }
+    
+    public void writeOutput() throws IOException{
+        FileWriter checkOutputLoc = null;
+        BufferedWriter fileOutput = null;
+        
+        try{
+            checkOutputLoc = new FileWriter(outputFile, true);
+            
+        }catch(IOException e){
+            System.out.println("Can't write here.");
+            JOptionPane error = new JOptionPane("There was an error writing to the file.", JOptionPane.ERROR);
+        }
+        
+        fileOutput = new BufferedWriter(checkOutputLoc);
+        
+        ArrayList<Order> orderList = invoice.getorderList();
+        Iterator<Order> it = orderList.iterator();
+        String dialog = "";
+        while(it.hasNext()){
+            Order order = it.next();
+            float discount = order.getuserDiscount();
+            Book book = order.getuserBook();
+            dialog = invoice.getTransaction()+", "+book.getbID()+" "+book.bName+" "+book.bPrice+" "+order.getuserQuantity()+" "+String.format("%.0f",discount)+" "+String.format("%.2f", order.getuserSubtotal())+", "+invoice.getorderTimeStamp();
+            fileOutput.write(dialog);
+            fileOutput.newLine();
+            
+        }
+        
+        try{
+            fileOutput.close();
+            checkOutputLoc.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         
         
     }

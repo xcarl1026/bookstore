@@ -3,7 +3,10 @@ Course: CNT 4714 - Fall 2017
 Assignment title: Program 1 - Event-driven Programming
 Date: Sunday Septembet 10, 2017 
 */
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,8 +23,10 @@ public class Invoice {
     private int orderUnits = 0;
     private float orderSubTotal = 0;
     private int numTransactions;
+    private float taxAmount = 0;
     private float orderTotal = 0;
     private String orderTimeStamp; 
+    private String transaction;
     
     public Invoice(){
         this.orderList = new ArrayList<Order>();
@@ -66,8 +71,35 @@ public class Invoice {
         this.numTransactions = numTransactions;
     }
     
+    public void setTransaction(String transaction){
+        this.transaction = transaction;
+    }
+    
+    public String getTransaction(){
+        return this.transaction;
+    }
     public int getnumTransactions(){
         return numTransactions;
+    }
+    
+    public void setDate(){
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd h:mm:ss a");
+        
+        this.orderTimeStamp = dateFormat.format(date);
+        
+        dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+        
+        this.transaction = dateFormat.format(date);
+    }
+    
+    public void setTaxAmount(float taxAmount){
+        this.taxAmount = taxAmount;
+              
+    }
+    
+    public float getTaxAmount(){
+        return this.taxAmount;
     }
     
 }

@@ -246,6 +246,11 @@ public class Gui extends javax.swing.JFrame {
         finishOrderBut.setEnabled(false);
         finishOrderBut.setMaximumSize(new java.awt.Dimension(109, 23));
         finishOrderBut.setMinimumSize(new java.awt.Dimension(109, 23));
+        finishOrderBut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finishOrderButActionPerformed(evt);
+            }
+        });
 
         exitBut.setText("Exit");
         exitBut.addActionListener(new java.awt.event.ActionListener() {
@@ -409,6 +414,11 @@ public class Gui extends javax.swing.JFrame {
         // TODO add your handling code here:
         storeLogic.viewOrder();
     }//GEN-LAST:event_viewOrderButActionPerformed
+
+    private void finishOrderButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishOrderButActionPerformed
+        // TODO add your handling code here:
+        storeLogic.finishOrder();
+    }//GEN-LAST:event_finishOrderButActionPerformed
     
     public JLabel getsubTotalLabel(){
         return this.subTotalLabel;
@@ -467,6 +477,11 @@ public class Gui extends javax.swing.JFrame {
     public JButton getconfirmBut(){
         return this.confirmBut;
     }
+    
+    public JButton getfinishOrderBut(){
+        return this.finishOrderBut;
+    }
+    
         /**
      * @param args the command line arguments
      */
