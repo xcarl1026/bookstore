@@ -17,16 +17,7 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author Carlos Diaz
- */
 public class StoreLogic {
      private Scanner line;
      private static ArrayList<Book> bookList;
@@ -77,7 +68,7 @@ public class StoreLogic {
             curBook.setbName(name);
             curBook.setbPrice(price);
             bookList.add(curBook);
-            System.out.println(curBook.bID+curBook.bName+curBook.bPrice);
+           // System.out.println(curBook.bID+curBook.bName+curBook.bPrice);
             //System.out.println(id + " " + record + " " + price);
             //break;
         }
@@ -102,7 +93,7 @@ public class StoreLogic {
             order.setuserDiscount(discount);
             order.setuserSubTotal(book.bPrice * userQuantity);
             //float totalBooksPrice = book.bPrice * userQuantity;
-            System.out.println(order.getuserSubtotal());
+           // System.out.println(order.getuserSubtotal());
             gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" $"+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", order.getuserSubtotal()));
            // gui.getsubTotalField().setText(String.format(" $%.2f", order.getuserSubtotal()));
            // gui.getsubTotalLabel().setText("Order Subtotal for "+userQuantity+" item(s):");
@@ -175,12 +166,12 @@ public class StoreLogic {
         }else{
         pullUpBookInfo(userOrder.getuserBook(), userOrder.getuserQuantity(), userOrder);
         }
-        System.out.println(userOrder.getuserBook().bID);
-        System.out.println(userOrder.getuserQuantity());
+       // System.out.println(userOrder.getuserBook().bID);
+       // System.out.println(userOrder.getuserQuantity());
         //Order tempOrder = new Order();
         tempOrder = userOrder;
                  
-        System.out.println(totalOrder);
+       // System.out.println(totalOrder);
         gui.getprocessBut().setEnabled(false);
         gui.getconfirmBut().setEnabled(true);
         
@@ -194,7 +185,7 @@ public class StoreLogic {
         invoice.getorderList().add(tempOrder);
         invoice.setorderSubTotal(invoice.getorderSubTotal() + tempOrder.getuserSubtotal());  
         float invoiceSubTotal =   invoice.getorderSubTotal();  
-        System.out.println(tempOrder.getuserSubtotal()+"YOOOOOOOOO");
+       // System.out.println(tempOrder.getuserSubtotal()+"YOOOOOOOOO");
         
         int orderUnits = tempOrder.getuserQuantity();
         invoice.setorderUnits(orderUnits + invoice.getorderUnits());
@@ -237,7 +228,7 @@ public class StoreLogic {
             float discount = order.getuserDiscount() * 100;
             Book book = order.getuserBook();
             dTemp = Integer.toString(i)+". "+book.getbID()+" "+book.bName+" "+book.bPrice+" "+order.getuserQuantity()+" %"+String.format("%.0f",discount)+" $"+String.format("%.2f", order.getuserSubtotal())+"\n";
-            System.out.println(dTemp);
+           // System.out.println(dTemp);
             //System.out.println(discount);
             //System.out.println(order.getuserSubtotal());
             i++;

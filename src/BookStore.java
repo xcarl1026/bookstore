@@ -5,10 +5,6 @@ Date: Sunday Septembet 10, 2017
 */
 import java.io.IOException;
 
-/**
- *
- * @author Carlos Diaz
- */
 public class BookStore {
 
     /**
