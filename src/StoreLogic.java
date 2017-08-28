@@ -274,7 +274,7 @@ public class StoreLogic {
         String dialog = "Date: ";
         int i = 1;
         dialog = dialog + invoice.getorderTimeStamp()+"\n\n";
-        dialog = dialog + "Number of line items: " + invoice.getorderUnits() + "\n\n";
+        dialog = dialog + "Number of line items: " + (invoice.getorderUnits()-1) + "\n\n";
         dialog = dialog + "Item# / ID / Title / Price / Quantity / Discount % / Subtotal: \n\n";
         
         ArrayList<Order> orderList = invoice.getorderList();
