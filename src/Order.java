@@ -36,7 +36,7 @@ public class Order {
     public float getuserSubtotal(){
         return this.userSubTotal;
     }
-    
+
     public void setuserSubTotal(float userSubTotal){
         this.userSubTotal = userSubTotal;
     }

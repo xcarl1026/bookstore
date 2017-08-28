@@ -274,7 +274,7 @@ public class StoreLogic {
         String dialog = "Date: ";
         int i = 1;
         dialog = dialog + invoice.getorderTimeStamp()+"\n\n";
-        dialog = dialog + "Number of line items: " + (invoice.getorderUnits()-1) + "\n\n";
+        dialog = dialog + "Number of line items: " + Integer.toString(totalOrder) + "\n\n";
         dialog = dialog + "Item# / ID / Title / Price / Quantity / Discount % / Subtotal: \n\n";
         
         ArrayList<Order> orderList = invoice.getorderList();
@@ -287,7 +287,7 @@ public class StoreLogic {
             i++;
         }
         
-        dialog = dialog + "Order SubTotal: " + String.format("%.02f", invoice.getorderSubTotal()) + "\n\n";
+        dialog = dialog + "\n\nOrder SubTotal: $" + String.format("%.02f", invoice.getorderSubTotal()) + "\n\n";
         dialog = dialog + "Tax Rate: " + taxdisp + "\n\n";
         invoice.setTaxAmount(invoice.getorderSubTotal()*taxRate);
         dialog = dialog + "Tax Amount: $"+ String.format("%.02f", invoice.getTaxAmount()) + "\n\n";
