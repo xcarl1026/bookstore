@@ -38,7 +38,7 @@ public class Order {
         this.userDiscount = userDiscount;
     }
     
-    public float getuserSubetotal(){
+    public float getuserSubtotal(){
         return this.userSubTotal;
     }
     

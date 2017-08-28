@@ -23,6 +23,9 @@ public class Invoice {
         this.orderList = new ArrayList<Order>();
     }
     
+    public ArrayList<Order> getorderList(){
+        return this.orderList;
+    }
     public int getorderUnits(){
         return this.orderUnits;
     }
@@ -35,15 +38,15 @@ public class Invoice {
          return orderSubTotal;
     }
     
-    public void setOrderSubTotal(float orderSubtotal){
-        this.orderSubTotal = orderSubTotal;
-    }
+   public void setorderSubTotal(float orderSubTotal){
+       this.orderSubTotal = orderSubTotal;
+   }
     
     public float getorderTotal(){
         return orderTotal;
     }
     
-    public void setorderTotal(){
+    public void setorderTotal(float orderTotal){
         this.orderTotal = orderTotal;
     }
     

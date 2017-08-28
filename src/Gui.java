@@ -2,6 +2,7 @@
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -17,12 +18,13 @@ import javax.swing.JTextField;
  * @author Carlos Diaz
  */
 public class Gui extends javax.swing.JFrame {
-  
+  StoreLogic storeLogic;
     
     /**
      * Creates new form Gui
      */
-    public Gui() {
+    public Gui() throws IOException {
+        this.storeLogic = new StoreLogic(Gui.this);
         initComponents();
     }
 
@@ -47,12 +49,12 @@ public class Gui extends javax.swing.JFrame {
         bookIDIn = new javax.swing.JTextField();
         itemQuantityIn = new javax.swing.JTextField();
         itemInfoOut = new javax.swing.JTextField();
-        totalItemsNumIn = new javax.swing.JTextField();
+        subTotalTextField = new javax.swing.JTextField();
         numItemsLabel = new javax.swing.JLabel();
         bookIDLabel = new javax.swing.JLabel();
         itemQuantityLabel = new javax.swing.JLabel();
         itemInfoLabel = new javax.swing.JLabel();
-        totalItemsLabel = new javax.swing.JLabel();
+        subTotalLabel = new javax.swing.JLabel();
         processBut = new javax.swing.JButton();
         finishOrderBut = new javax.swing.JButton();
         exitBut = new javax.swing.JButton();
@@ -97,7 +99,6 @@ public class Gui extends javax.swing.JFrame {
             .addComponent(dialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        bookIDEmptyAlert.setLocationByPlatform(true);
         bookIDEmptyAlert.setMinimumSize(new java.awt.Dimension(323, 125));
 
         bookIDEmptyPanel.setBackground(new java.awt.Color(34, 37, 44));
@@ -147,6 +148,7 @@ public class Gui extends javax.swing.JFrame {
         jAccentPane.setBackground(new java.awt.Color(225, 70, 88));
         jAccentPane.setOpaque(true);
 
+        numItemsIn.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         numItemsIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 numItemsInActionPerformed(evt);
@@ -159,6 +161,7 @@ public class Gui extends javax.swing.JFrame {
             }
         });
 
+        itemInfoOut.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         itemInfoOut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 itemInfoOutActionPerformed(evt);
@@ -169,7 +172,7 @@ public class Gui extends javax.swing.JFrame {
         jAccentPane.setLayer(bookIDIn, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jAccentPane.setLayer(itemQuantityIn, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jAccentPane.setLayer(itemInfoOut, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jAccentPane.setLayer(totalItemsNumIn, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jAccentPane.setLayer(subTotalTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jAccentPaneLayout = new javax.swing.GroupLayout(jAccentPane);
         jAccentPane.setLayout(jAccentPaneLayout);
@@ -182,7 +185,7 @@ public class Gui extends javax.swing.JFrame {
                     .addComponent(numItemsIn)
                     .addComponent(bookIDIn)
                     .addComponent(itemInfoOut)
-                    .addComponent(totalItemsNumIn, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
+                    .addComponent(subTotalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jAccentPaneLayout.setVerticalGroup(
@@ -197,7 +200,7 @@ public class Gui extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(itemInfoOut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(totalItemsNumIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(subTotalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(41, Short.MAX_VALUE))
         );
 
@@ -222,10 +225,10 @@ public class Gui extends javax.swing.JFrame {
         itemInfoLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         itemInfoLabel.setText("Item #1 Info:");
 
-        totalItemsLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        totalItemsLabel.setForeground(new java.awt.Color(192, 179, 160));
-        totalItemsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        totalItemsLabel.setText("Order Subtotal for 0 item(s):");
+        subTotalLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        subTotalLabel.setForeground(new java.awt.Color(192, 179, 160));
+        subTotalLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        subTotalLabel.setText("Order Subtotal for 0 item(s):");
 
         processBut.setText("Process item #1");
         processBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -268,13 +271,18 @@ public class Gui extends javax.swing.JFrame {
         viewOrderBut.setEnabled(false);
         viewOrderBut.setMaximumSize(new java.awt.Dimension(109, 23));
         viewOrderBut.setMinimumSize(new java.awt.Dimension(109, 23));
+        viewOrderBut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewOrderButActionPerformed(evt);
+            }
+        });
 
         jBasePane.setLayer(jAccentPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(numItemsLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(bookIDLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(itemQuantityLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(itemInfoLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jBasePane.setLayer(totalItemsLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBasePane.setLayer(subTotalLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(processBut, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(finishOrderBut, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jBasePane.setLayer(exitBut, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -310,7 +318,7 @@ public class Gui extends javax.swing.JFrame {
                         .addGap(56, 56, 56)
                         .addGroup(jBasePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(itemInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(totalItemsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(subTotalLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(18, 18, 18)
                 .addComponent(jAccentPane))
         );
@@ -328,7 +336,7 @@ public class Gui extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(itemInfoLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(totalItemsLabel))
+                        .addComponent(subTotalLabel))
                     .addGroup(jBasePaneLayout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addComponent(jAccentPane)))
@@ -371,6 +379,7 @@ public class Gui extends javax.swing.JFrame {
 
     private void newOrderButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newOrderButActionPerformed
         // TODO add your handling code here:
+        storeLogic.newOrder();
     }//GEN-LAST:event_newOrderButActionPerformed
 
     private void exitButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButActionPerformed
@@ -380,18 +389,30 @@ public class Gui extends javax.swing.JFrame {
 
     private void confirmButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButActionPerformed
         // TODO add your handling code here:
+        storeLogic.confirmOrder();
     }//GEN-LAST:event_confirmButActionPerformed
 
     private void processButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processButActionPerformed
-        try {
-            StoreLogic storeLogic = new StoreLogic(Gui.this);
+        
+            
             storeLogic.processOrder();
            
-        } catch (IOException ex) {
-            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
         
     }//GEN-LAST:event_processButActionPerformed
+
+    private void viewOrderButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewOrderButActionPerformed
+        // TODO add your handling code here:
+        storeLogic.viewOrder();
+    }//GEN-LAST:event_viewOrderButActionPerformed
+    
+    public JLabel getsubTotalLabel(){
+        return this.subTotalLabel;
+    }
+    
+    public JTextField getsubTotalField(){
+        return this.subTotalTextField;
+    }
     
      public JDialog getbookIDEmptyAlert(){
         return bookIDEmptyAlert;
@@ -419,8 +440,28 @@ public class Gui extends javax.swing.JFrame {
     public JLabel getBookIDLabel(){
         return bookIDLabel;
     }
+    
+    public void setitemQuantityLabel(int num){
+        this.itemQuantityLabel.setText("Enter Quantity for item #"+num+":");
+    }
+    
+    public void setitemInfoLabel(int num){
+        this.itemInfoLabel.setText("Item #"+num+" Info:");
+    }
+    
     public void setBookIDLabel(int num){
         this.bookIDLabel.setText("Enter Book ID for item #"+num+":");
+    }
+    
+    public JButton getviewOrderBut(){
+        return this.viewOrderBut;
+    }
+    public JButton getprocessBut(){
+        return this.processBut;
+    }
+    
+    public JButton getconfirmBut(){
+        return this.confirmBut;
     }
         /**
      * @param args the command line arguments
@@ -452,7 +493,11 @@ public class Gui extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Gui().setVisible(true);
+                try {
+                    new Gui().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -479,8 +524,8 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JTextField numItemsIn;
     private javax.swing.JLabel numItemsLabel;
     private javax.swing.JButton processBut;
-    private javax.swing.JLabel totalItemsLabel;
-    private javax.swing.JTextField totalItemsNumIn;
+    private javax.swing.JLabel subTotalLabel;
+    private javax.swing.JTextField subTotalTextField;
     private javax.swing.JButton viewOrderBut;
     // End of variables declaration//GEN-END:variables
 }

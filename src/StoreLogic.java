@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -25,15 +26,19 @@ public class StoreLogic {
      private static ArrayList<Book> bookList;
      private Gui gui;
      private String orderQuantityField;
-     private int totalBookAmount;
-     private int totalBookAmount_counter;
-     private Order userOrder;
+     private int totalOrder;
+     private int totalOrder_counter = 1;
+     private int viewCounter = 0;
+     private Order tempOrder = new Order();
+     private Invoice invoice = new Invoice();
     
     public StoreLogic(Gui gui) throws IOException{
         //Grab the gui
         this.gui = gui;
         openFile();
         bookList = readFile();
+      
+        
         
         //System.out.println(bookList.get(1).bID);
         
@@ -76,19 +81,73 @@ public class StoreLogic {
         }
         return new Book();
     }
+    
+   /* public float prepareDiscounts(int userQuantity, Book book, Order order){
+        float discount = 0;
+        //set discount when less than 4
+        if(userQuantity<=4){
+            order.setuserDiscount(discount);
+            order.setuserSubTotal(book.bPrice * userQuantity);
+            //float totalBooksPrice = book.bPrice * userQuantity;
+            //System.out.println(totalBooksPrice);
+            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", order.getuserQuantity()));
+            return discount;
+        }else if(userQuantity >5 && userQuantity < 9){
+            discount = (float) 0.1;
+            order.setuserDiscount(discount);
+            order.setuserSubTotal(book.bPrice * userQuantity);
+            //float totalBooksPrice = book.bPrice * userQuantity;
+            //System.out.println(totalBooksPrice);
+            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", order.getuserQuantity()));
+            return discount;
+        }
+        return discount;
+    }*/
     //Pull up book info and set discounts for information field.
     public void pullUpBookInfo(Book book, int userQuantity, Order order){
         float discount = order.getuserDiscount();
         //String.format("%.0f", discount);
-        if(userQuantity<=4){
-            order.setuserDiscount(0);
-            order.setuserSubTotal(book.bPrice);
-            float totalBooksPrice = book.bPrice * userQuantity;
+       if(userQuantity<=4){
+            order.setuserDiscount(discount);
+            order.setuserSubTotal(book.bPrice * userQuantity);
+            //float totalBooksPrice = book.bPrice * userQuantity;
+            System.out.println(order.getuserSubtotal());
+            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" $"+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", order.getuserSubtotal()));
+           // gui.getsubTotalField().setText(String.format(" $%.2f", order.getuserSubtotal()));
+           // gui.getsubTotalLabel().setText("Order Subtotal for "+userQuantity+" item(s):");
+        }else if(userQuantity >=5 && userQuantity <= 9){
+            discount = (float) 0.1;
+            float displaydisc = discount *100;
+            order.setuserDiscount(discount);
+            order.setuserSubTotal((book.bPrice * userQuantity) - book.bPrice * userQuantity * discount);
+            //float totalBooksPrice = book.bPrice * userQuantity;
             //System.out.println(totalBooksPrice);
-            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", discount)+String.format(" $%.2f", totalBooksPrice));
-        }
+            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" $"+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", displaydisc)+String.format(" $%.2f", order.getuserSubtotal()));
+            //gui.getsubTotalField().setText(String.format(" $%.2f", order.getuserSubtotal()));
+           // gui.getsubTotalLabel().setText("Order Subtotal for "+userQuantity+" item(s):");
+        }else if(userQuantity >=10 && userQuantity <= 14){
+            discount = (float) 0.15;
+            float displaydisc = discount *100;
+            order.setuserDiscount(discount);
+            order.setuserSubTotal((book.bPrice * userQuantity) - book.bPrice * userQuantity * discount);
+            //float totalBooksPrice = book.bPrice * userQuantity;
+            //System.out.println(totalBooksPrice);
+            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" $"+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", displaydisc)+String.format(" $%.2f", order.getuserSubtotal()));
        // gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice));
-        
+           // gui.getsubTotalField().setText(String.format(" $%.2f", order.getuserSubtotal()));
+            //gui.getsubTotalLabel().setText("Order Subtotal for "+userQuantity+" item(s):");
+        }else if(userQuantity >=15){
+            discount = (float) 0.2;
+            float displaydisc = discount *100;
+            order.setuserDiscount(discount);
+            order.setuserSubTotal((book.bPrice * userQuantity) - book.bPrice * userQuantity * discount);
+            //float totalBooksPrice = book.bPrice * userQuantity;
+            //System.out.println(totalBooksPrice);
+            gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" $"+Float.toString(book.bPrice)+" "+userQuantity+" %"+String.format("%.0f", displaydisc)+String.format(" $%.2f", order.getuserSubtotal()));
+       // gui.getitemInfoOut().setText(Integer.toString(book.bID)+" "+book.bName+" "+Float.toString(book.bPrice));
+            //gui.getsubTotalField().setText(String.format(" $%.2f", order.getuserSubtotal()));
+            //gui.getsubTotalLabel().setText("Order Subtotal for "+userQuantity+" item(s):");
+        }
     }
     
     //Logic that will process the order when process item button is clicked
@@ -103,10 +162,10 @@ public class StoreLogic {
              return;
         }else{
             try{    
-            totalBookAmount = Integer.parseInt(orderQuantityField);
+            totalOrder = Integer.parseInt(orderQuantityField);
             bookID = Integer.parseInt(gui.getBookIDIn().getText());
             userQuantity = Integer.parseInt(gui.getitemQuantityIn().getText());
-            //System.out.println(totalBookAmount);
+            //System.out.println(totalOrder);
             //System.out.println(bookID);
             //System.out.println(userQuantity);
             }catch(NumberFormatException not){
@@ -121,17 +180,108 @@ public class StoreLogic {
         
         if(userOrder.getuserBook().bID == 0){
             JOptionPane.showMessageDialog(null, "Book ID "+bookID+" is not on file.");
+            return;
         }else{
         pullUpBookInfo(userOrder.getuserBook(), userOrder.getuserQuantity(), userOrder);
         }
         System.out.println(userOrder.getuserBook().bID);
         System.out.println(userOrder.getuserQuantity());
+        //Order tempOrder = new Order();
+        tempOrder = userOrder;
+                 
+        System.out.println(totalOrder);
+        gui.getprocessBut().setEnabled(false);
+        gui.getconfirmBut().setEnabled(true);
         
-               
+        gui.getNumItemsIn().setEnabled(false);
+        //gui.getitemInfoOut().setEnabled(false);
         
-        //int totalOrderQuantityField = Integer.parseInt(orderQuantityField.getText());
-        //System.out.println(totalOrderQuantityField);
         
+    }
+    
+    public void confirmOrder(){
+        invoice.getorderList().add(tempOrder);
+        float invoiceSubTotal = invoice.getorderSubTotal() + tempOrder.getuserSubtotal();
+        invoice.setorderSubTotal(invoiceSubTotal);       
+        
+        int orderUnits = tempOrder.getuserQuantity();
+        invoice.setorderUnits(orderUnits + invoice.getorderUnits());
+       // System.out.println(invoice.getorderUnits()+"LOOOK");
+        
+        gui.getsubTotalField().setText(String.format(" $%.2f", invoiceSubTotal));
+        gui.getsubTotalLabel().setText("Order Subtotal for "+invoice.getorderUnits()+" item(s):");
+        //invoice.setorderUnits(totalOrder);
+        JOptionPane.showMessageDialog(null, "Item #"+totalOrder_counter+" has been accepted.");
+        gui.getconfirmBut().setEnabled(false);
+        if(totalOrder_counter < totalOrder){
+            gui.getprocessBut().setEnabled(true);
+            gui.getprocessBut().setText("Process item #"+(totalOrder_counter+1));
+            gui.getconfirmBut().setText("Confirm item #"+(totalOrder_counter+1));
+            gui.setBookIDLabel(totalOrder_counter+1);
+            gui.setitemInfoLabel(totalOrder_counter+1);
+            gui.setitemQuantityLabel(totalOrder_counter+1);
+            
+        }
+        totalOrder_counter++;
+        //System.out.println(totalOrder+" "+totalOrder_counter);
+        gui.getviewOrderBut().setEnabled(true);
+        gui.getBookIDIn().setText("");
+        gui.getitemQuantityIn().setText("");
+        
+        
+       // System.out.println(invoice.getorderUnits());
+    }
+    
+    public void viewOrder(){
+        int i = 1;
+        String dialog = "";
+        String dTemp = null;
+        ArrayList<Order> orderList = invoice.getorderList();
+        Iterator<Order> it = orderList.iterator();
+        while(it.hasNext()){
+            Order order = it.next();
+            float discount = order.getuserDiscount() * 100;
+            Book book = order.getuserBook();
+            dTemp = Integer.toString(i)+". "+book.getbID()+" "+book.bName+" "+book.bPrice+" "+order.getuserQuantity()+" %"+String.format("%.0f",discount)+" $"+String.format("%.2f", order.getuserSubtotal())+"\n";
+            System.out.println(dTemp);
+            //System.out.println(discount);
+            //System.out.println(order.getuserSubtotal());
+            i++;
+            dialog = dialog+dTemp;
+        }
+        
+        JOptionPane.showMessageDialog(null, dialog);
+    }
+    
+    public void newOrder(){
+        totalOrder = 0;
+        totalOrder_counter = 1;
+        gui.setBookIDLabel(totalOrder_counter);
+        gui.setitemQuantityLabel(totalOrder_counter);
+        gui.setitemInfoLabel(totalOrder_counter);
+        gui.getsubTotalLabel().setText("Order Subtotal for 0 item(s):");
+        gui.getBookIDIn().setText("");
+        gui.getitemQuantityIn().setText("");
+        gui.getitemInfoOut().setText("");
+        gui.getNumItemsIn().setText("");
+        gui.getsubTotalField().setText("");
+        gui.getprocessBut().setEnabled(true);
+        gui.getprocessBut().setText("Process item #"+totalOrder_counter);
+        gui.getconfirmBut().setText("Confirm item #"+totalOrder_counter);
+        invoice.setorderSubTotal(0);
+        
+        ArrayList<Order> orderList = invoice.getorderList();
+        Iterator<Order> it = orderList.iterator();
+        if(orderList.isEmpty()){
+            gui.getNumItemsIn().setEnabled(true);
+            gui.getviewOrderBut().setEnabled(false);
+            return;
+        }else{
+            orderList.clear();
+        }
+        invoice.setorderUnits(0);
+        gui.getNumItemsIn().setEnabled(true);
+        gui.getviewOrderBut().setEnabled(false);
         
         
     }
