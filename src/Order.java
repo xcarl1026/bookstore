@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author Carlos Diaz
- */
+/*Name: Carlos Diaz
+Course: CNT 4714 - Fall 2017
+Assignment title: Program 1 - Event-driven Programming
+Date: Sunday Septembet 10, 2017 
+*/
 public class Order {
     private Book userBook;
     private int userQuantity;
